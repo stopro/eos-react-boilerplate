@@ -7,7 +7,11 @@
     "start": "webpack-dev-server --config ./webpack.config.js --mode development",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "eos",
+    "eosjs",
+    "react"
+  ],
   "author": "Richard Zhao",
   "license": "MIT",
   "babel": {
@@ -29,6 +33,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
+    "eosjs": "^6.1.11",
     "react": "^16.3.2",
     "react-dom": "^16.3.2"
   }
