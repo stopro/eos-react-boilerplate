@@ -6,12 +6,17 @@ module.exports = {
     './src/index.jsx',
     'react-hot-loader/patch'
   ],
+  devtool: "eval-source-map", // added for devtool in chrome.
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: ['babel-loader']
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
       }
     ]
   },

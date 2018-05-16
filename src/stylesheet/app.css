@@ -1,0 +1,9 @@
+
+.console {
+  position:fixed;
+  margin: 40px;
+  bottom: 18px;
+  width: 90%;
+  height: 30%;
+  border: 2px solid #73AD21;
+}
