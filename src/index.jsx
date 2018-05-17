@@ -16,10 +16,7 @@ const EOS_CONFIG = {
   contractName: "",
   contractSender: "",
   clientCongfig: {
-    keyProvider: ['5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3'],
-                  //
-                  // '5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD',
-                  // '5JRLwTK2RBRkD6xdvFLAjWUtFGJugXGzHQPemMix1DNbrkBMLhg'],
+    keyProvider: ['5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD'],
     httpEndpoint: 'http://192.168.1.194:8888'
   }
 };
@@ -81,6 +78,33 @@ class ContractDemo extends React.Component {
     }).catch((err) => {
       this.logConsole(err)
     })
+  }
+
+  do_create_set_permission() {
+    let eosClient = EOS.Localnet(EOS_CONFIG.clientCongfig)
+    // set account permission.
+    eosClient.updateauth({
+      account: "richard",  // account_names
+      permission: 'active', // permission
+      parent: "owner", // parent
+      data: {
+              threshold: 1,
+              keys: [
+                { key: "EOS6RZJw3hnLBvtS95HwvvfsRd2vJjKhQ9n4gxEkJrw2jewX4stbR", weight: 1}
+              ],
+              accounts: [
+              {
+                permission: {actor: "dice",permission:"active"},
+                weight:1
+              }]
+            },
+      delay: 0 // delay
+    }).then((trans) => {
+      this.logConsole(trans)
+    }).catch((err) => {
+      this.logConsole(err)
+    })
+
   }
 
   do_get_block() {
@@ -182,6 +206,7 @@ class ContractDemo extends React.Component {
           </div>
         <div>
           <button onClick={this.do_get_currency_stats.bind(this)}>获取Currency信息</button>
+          <button onClick={this.do_create_set_permission.bind(this)}>赋权Permission</button>
         </div>
 
         <textarea className="console" rows="10" cols="50" value={this.state.output} readOnly></textarea>
