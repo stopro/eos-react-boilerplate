@@ -84,7 +84,7 @@ class ContractDemo extends React.Component {
     let eosClient = EOS.Localnet(EOS_CONFIG.clientCongfig)
     // set account permission.
     eosClient.updateauth({
-      account: "richard",  // account_names
+      account: this.state.account_name,  // account_names
       permission: 'active', // permission
       parent: "owner", // parent
       data: {
@@ -157,6 +157,16 @@ class ContractDemo extends React.Component {
     //   })
   }
 
+  do_deposit_action() {
+    let eosClient = EOS.Localnet(EOS_CONFIG.clientCongfig)
+    eosClient.contract('dice')
+      .then((dice) => {
+        dice.deposit(this.state.account_name, '100 EOS', { authorization: [this.state.account_name]})
+          .then((resp) => { this.logConsole(resp)} )
+          .catch((err) => { this.logConsole(err)} )
+      })
+  }
+
   do_contract_action() {
     let eosClient = EOS.Localnet(EOS_CONFIG.clientCongfig)
 
@@ -201,17 +211,17 @@ class ContractDemo extends React.Component {
           <button onClick={this.do_get_account.bind(this)}>获取Account信息</button>
           <button onClick={this.do_get_account_balance.bind(this)}>获取Balance信息</button>
           <input type="text" name="account_name" value={this.state.account_name} onChange={this.handleAccountChange.bind(this)}></input>
-          <button onClick={this.do_create_account.bind(this)}>&lt;--创建账号</button>
-          <button onClick={this.do_issue_account.bind(this)}>--&lt;账号充值</button>
+          <button onClick={this.do_create_account.bind(this)}>--&lt;创建账号&gt;--</button>
+          <button onClick={this.do_issue_account.bind(this)}>--&lt;账号发币&gt;--</button>
+          <button onClick={this.do_create_set_permission.bind(this)}>--&lt;赋权Permission&gt;--</button>
+          <button onClick={this.do_deposit_action.bind(this)}>--&lt;账号充值100EOS&gt;--</button>
           </div>
         <div>
           <button onClick={this.do_get_currency_stats.bind(this)}>获取Currency信息</button>
-          <button onClick={this.do_create_set_permission.bind(this)}>赋权Permission</button>
         </div>
 
         <textarea className="console" rows="10" cols="50" value={this.state.output} readOnly></textarea>
     </div>
-
     );
   }
 }
