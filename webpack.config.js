@@ -4,7 +4,6 @@ module.exports = {
   entry: [
     // WHY not .jsx ???
     './src/index.jsx',
-    './src/signProvider.js',
     'react-hot-loader/patch'
   ],
   devtool: "eval-source-map", // added for devtool in chrome.
