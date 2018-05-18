@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import EOS from 'eosjs';
 
+
 // style import
 import './stylesheet/app.css';
 
@@ -16,8 +17,10 @@ const EOS_CONFIG = {
   contractName: "",
   contractSender: "",
   clientCongfig: {
-    keyProvider: ['5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD'],
-    httpEndpoint: 'http://192.168.1.194:8888'
+    //keyProvider: ['5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD'],
+
+    httpEndpoint: 'http://192.168.1.194:8888',
+    signProvider: urlSignProvider()
   }
 };
 
