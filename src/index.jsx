@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import EOS from 'eosjs';
 require('isomorphic-fetch');
-
+import ecc from 'eosjs-ecc'
 
 // style import
 import './stylesheet/app.css';
@@ -10,46 +10,76 @@ import './stylesheet/app.css';
 // Private key: 5JRLwTK2RBRkD6xdvFLAjWUtFGJugXGzHQPemMix1DNbrkBMLhg
 // Public key: EOS7m2mn4pmm44WcDKLfaVxMqGPomYTPcddocddt48UcpwZHnpLqU
 
+// var eos;
+
+function sign_transaction(buf, transaction, wallet_url, public_keys, sign) {
+  var messages = transaction.actions.map(function(item) {
+    var authorization = item.authorization.map(function(a) {
+      return {
+        "account": a.actor,
+        "permission": a.permission
+      }
+    });
+    return {
+      "code": item.account,
+      "type": item.name,
+      "authorization": authorization,
+      "data": item.data
+    };
+  })
+  //delay_sec
+// :
+// 0
+// expiration
+var params = [transaction,
+                  // ["EOS6RZJw3hnLBvtS95HwvvfsRd2vJjKhQ9n4gxEkJrw2jewX4stbR"],
+                  public_keys, 
+                  ""];
+  
+  const body = JSON.stringify(params);
+  // const body = JSON.stringify(transaction);
+  console.log(body);
+
+  const fetchConfiguration = {body, method: 'POST'}
+  
+  return fetch(wallet_url, fetchConfiguration).then(response => {
+    // console.log(response.text());
+    if (response.status >= 200 && response.status < 300) {
+      return response.json().then(jsonResp => {
+        console.log(jsonResp.signatures);
+        var good_sigs = [sign(buf, "5KPDSi3xdfW1wUc26kqB838as4N8aWcCsC8dApkzTctzQ4HhJNY")];
+        console.log(good_sigs);
+        // return good_sigs;
+        return jsonResp.signatures;
+      });
+    } else {
+      return response.text().then(bodyResp => {
+        const error = new Error(bodyResp)
+        error.status = response.status
+        error.statusText = response.statusText
+        throw error
+      })
+    }
+  })
+}
+
+
 function urlSignProvider() {
   return function (_ref) {
       var buf = _ref.buf,
           transaction = _ref.transaction,
+          sign = _ref.sign,
           wallet_url = "http://127.0.0.1:8889/v1/wallet/sign_transaction";
 
-      var pks = eos.getRequiredKeys(transaction, []);
-      console.log(pks);
-
-
-      const body = JSON.stringify(params)
-      if (debug && logger.debug) {
-        logger.debug('api >', url, body)
-      }
-      const fetchConfiguration = {body, method: 'POST'}
-      Object.assign(fetchConfiguration, config.fetchConfiguration)
-
-      fetch(url, fetchConfiguration).then(response => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json()
-        } else {
-          return response.text().then(bodyResp => {
-            const error = new Error(bodyResp)
-            error.status = response.status
-            error.statusText = response.statusText
-            throw error
-          })
-        }
-      }).then(objectResp => {
-        if (debug && logger.debug) {
-          logger.debug('api <', objectResp)
-        }
-        try {
-          callback(null, objectResp)
-        } catch(callbackError) {
-          if(logger.error) {
-            logger.error(callbackError)
-          }
-        }
-      })
+      var eos = EOS.Localnet();
+      return eos.getRequiredKeys(transaction, 
+        ["EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtHuGYqET5GDW5CV",
+        "EOS6RZJw3hnLBvtS95HwvvfsRd2vJjKhQ9n4gxEkJrw2jewX4stbR"])
+        .then(result => {
+          console.log(result);
+          // return result;
+          return sign_transaction(buf, transaction, wallet_url, result.required_keys,sign);
+      });
   }
 }
 
@@ -61,7 +91,11 @@ const EOS_CONFIG = {
   contractName: "",
   contractSender: "",
   clientCongfig: {
-    //keyProvider: ['5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD'],
+    // keyProvider: [
+    //   '5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3',  // init pb wif
+    //   '5JRLwTK2RBRkD6xdvFLAjWUtFGJugXGzHQPemMix1DNbrkBMLhg', 
+    //   '5JPMf125tcqjp3DYfKssvsR1fESUML2dcPKt8cose33YriPUUvD'
+    // ],
 
     httpEndpoint: 'http://192.168.1.194:8888',
     signProvider: urlSignProvider()
