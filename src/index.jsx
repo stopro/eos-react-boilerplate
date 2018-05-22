@@ -13,29 +13,10 @@ import './stylesheet/app.css';
 // var eos;
 
 function sign_transaction(buf, transaction, wallet_url, public_keys, sign) {
-  var messages = transaction.actions.map(function(item) {
-    var authorization = item.authorization.map(function(a) {
-      return {
-        "account": a.actor,
-        "permission": a.permission
-      }
-    });
-    return {
-      "code": item.account,
-      "type": item.name,
-      "authorization": authorization,
-      "data": item.data
-    };
-  })
-  //delay_sec
-// :
-// 0
-// expiration
-var params = [transaction,
+  var params = [transaction,
                   // ["EOS6RZJw3hnLBvtS95HwvvfsRd2vJjKhQ9n4gxEkJrw2jewX4stbR"],
                   public_keys, 
                   ""];
-  
   const body = JSON.stringify(params);
   // const body = JSON.stringify(transaction);
   console.log(body);
